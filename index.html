@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexora Studio — Creative & Digital Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ─── RESET & VARIABLES ─── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:       #080810;
+    --bg2:      #0e0e1a;
+    --bg3:      #141428;
+    --gold:     #c9a84c;
+    --gold-lt:  #e8c96e;
+    --text:     #f0ede6;
+    --muted:    #7e7e99;
+    --border:   rgba(201,168,76,.15);
+    --glass:    rgba(14,14,26,.7);
+    --radius:   16px;
+    --ease:     cubic-bezier(.77,0,.175,1);
+  }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── CUSTOM CURSOR ─── */
+  
+
+  /* ─── PAGE TRANSITION OVERLAY ─── */
+  #page-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: var(--bg);
+    clip-path: inset(0 0 100% 0);
+    pointer-events: none;
+  }
+  #page-overlay.entering {
+    animation: overlayEnter .55s var(--ease) forwards;
+  }
+  #page-overlay.leaving {
+    animation: overlayLeave .55s var(--ease) forwards;
+  }
+  @keyframes overlayEnter {
+    from { clip-path: inset(100% 0 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+  @keyframes overlayLeave {
+    from { clip-path: inset(0 0 0 0); }
+    to   { clip-path: inset(0 0 100% 0); }
+  }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; animation: pageFadeIn .7s var(--ease) both; }
+  @keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 24px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background .4s, padding .4s, backdrop-filter .4s;
+  }
+  nav.scrolled {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    padding: 16px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    color: var(--text);
+    cursor: pointer;
+    transition: color .3s;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-logo:hover { color: var(--gold-lt); }
+
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    font-size: .85rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    position: relative;
+    transition: color .3s;
+    
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0; height: 1px;
+    background: var(--gold);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform .4s var(--ease);
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
+
+  .nav-cta {
+    padding: 10px 28px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    background: transparent;
+    
+    transition: background .3s, color .3s, transform .3s;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--bg); transform: translateY(-2px); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 140px 60px 80px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -100px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(201,168,76,.12) 0%, transparent 65%);
+    animation: pulse 6s ease-in-out infinite;
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    bottom: -150px; left: -50px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(88,68,180,.1) 0%, transparent 65%);
+    animation: pulse 8s ease-in-out infinite reverse;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.08); opacity: .7; }
+  }
+
+  /* Grid lines */
+  .grid-lines {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: .75rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    opacity: 0; animation: slideUp .8s var(--ease) .2s forwards;
+  }
+  .hero-tag::before {
+    content: ''; width: 32px; height: 1px; background: var(--gold);
+  }
+
+  h1.hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -.01em;
+    margin-bottom: 28px;
+    opacity: 0; animation: slideUp .9s var(--ease) .4s forwards;
+  }
+  h1.hero-title em {
+    font-style: italic; color: var(--gold);
+    font-weight: 400;
+  }
+
+  .hero-desc {
+    font-size: 1.05rem; line-height: 1.8;
+    color: var(--muted); max-width: 520px;
+    margin-bottom: 48px;
+    opacity: 0; animation: slideUp .9s var(--ease) .6s forwards;
+  }
+
+  .hero-actions {
+    display: flex; align-items: center; gap: 28px;
+    opacity: 0; animation: slideUp .9s var(--ease) .8s forwards;
+  }
+
+  .btn-primary {
+    padding: 16px 44px;
+    background: var(--gold);
+    color: var(--bg);
+    font-size: .85rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    border: none; 
+    position: relative; overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,.15);
+    transform: translateX(-100%);
+    transition: transform .4s var(--ease);
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(201,168,76,.25); }
+  .btn-primary:hover::after { transform: translateX(100%); }
+
+  .btn-ghost {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--text); font-size: .85rem; font-weight: 500; letter-spacing: .05em;
+    background: none; border: none; 
+    transition: gap .3s, color .3s;
+  }
+  .btn-ghost:hover { color: var(--gold); gap: 16px; }
+  .btn-ghost .arrow {
+    width: 36px; height: 1px; background: currentColor; position: relative;
+    transition: width .3s;
+  }
+  .btn-ghost .arrow::after {
+    content: '';
+    position: absolute; right: 0; top: 50%;
+    width: 8px; height: 8px;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .btn-ghost:hover .arrow { width: 50px; }
+
+  .hero-stats {
+    display: flex; gap: 60px;
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    opacity: 0; animation: slideUp .9s var(--ease) 1s forwards;
+    position: relative; z-index: 1;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem; font-weight: 300; color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: .75rem; font-weight: 500; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--muted);
+    margin-top: 6px;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTION BASICS ─── */
+  section {
+    padding: 100px 60px;
+    position: relative;
+  }
+  .section-label {
+    font-size: .7rem; font-weight: 500; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--gold);
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-label::before { content: ''; width: 28px; height: 1px; background: var(--gold); }
+
+  h2.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 300; line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  h2.section-title em { font-style: italic; color: var(--gold); font-weight: 400; }
+
+  .section-sub {
+    font-size: .95rem; line-height: 1.8; color: var(--muted); max-width: 480px;
+    margin-bottom: 60px;
+  }
+
+  /* ─── ABOUT PAGE ─── */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center; margin-top: 60px;
+  }
+  .about-img-wrap {
+    position: relative; aspect-ratio: 4/5;
+  }
+  .about-img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--bg3) 0%, #1a1a35 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6rem; color: var(--gold); opacity: .2;
+    position: relative; overflow: hidden;
+  }
+  .about-img-placeholder::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg, rgba(201,168,76,.04) 0, rgba(201,168,76,.04) 1px,
+      transparent 0, transparent 50%
+    );
+    background-size: 20px 20px;
+  }
+  .about-frame {
+    position: absolute; inset: -16px; border: 1px solid var(--border); z-index: -1;
+    transition: inset .4s var(--ease);
+  }
+  .about-img-wrap:hover .about-frame { inset: -24px; }
+
+  .about-badge {
+    position: absolute; bottom: 32px; right: -24px;
+    background: var(--gold); color: var(--bg);
+    padding: 20px 28px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 700;
+    text-align: center; line-height: 1.2;
+    z-index: 2;
+  }
+  .about-badge span { font-size: .65rem; font-family: 'Outfit', sans-serif; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; display: block; margin-top: 4px; }
+
+  .value-list { list-style: none; margin-top: 32px; }
+  .value-list li {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+    font-size: .95rem; line-height: 1.6; color: var(--muted);
+    transition: color .3s;
+  }
+  .value-list li:hover { color: var(--text); }
+  .value-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; color: var(--gold); min-width: 28px;
+  }
+
+  /* ─── SERVICES ─── */
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    margin-top: 60px;
+  }
+  .service-card {
+    background: var(--bg2);
+    padding: 44px 36px;
+    position: relative; overflow: hidden;
+    transition: background .4s;
+    
+  }
+  .service-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .5s var(--ease);
+  }
+  .service-card:hover { background: var(--bg3); }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-icon {
+    font-size: 2rem; margin-bottom: 24px;
+    display: block;
+  }
+  .service-num {
+    position: absolute; top: 32px; right: 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem; font-weight: 300; color: var(--border);
+    line-height: 1; transition: color .4s;
+  }
+  .service-card:hover .service-num { color: rgba(201,168,76,.1); }
+
+  .service-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 400;
+    margin-bottom: 12px; color: var(--text);
+  }
+  .service-card p { font-size: .88rem; line-height: 1.75; color: var(--muted); }
+  .service-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 24px; font-size: .75rem; font-weight: 500;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--gold);
+    transition: gap .3s;
+  }
+  .service-card:hover .service-link { gap: 14px; }
+
+  /* ─── PORTFOLIO ─── */
+  .portfolio-filter {
+    display: flex; gap: 4px; margin-bottom: 48px;
+  }
+  .filter-btn {
+    padding: 8px 22px;
+    font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+     transition: all .3s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--gold); color: var(--bg); border-color: var(--gold);
+  }
+
+  .portfolio-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .portfolio-item {
+    aspect-ratio: 4/3; position: relative; overflow: hidden; 
+    background: var(--bg3);
+  }
+  .portfolio-item.featured {
+    grid-column: span 2; aspect-ratio: 16/9;
+  }
+  .portfolio-bg {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; opacity: .15;
+    transition: transform .6s var(--ease), opacity .4s;
+  }
+  .portfolio-item:hover .portfolio-bg { transform: scale(1.08); opacity: .25; }
+
+  .portfolio-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,8,16,.95) 0%, transparent 60%);
+    opacity: 0; transition: opacity .4s;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 28px;
+  }
+  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+  .portfolio-overlay h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 400; margin-bottom: 4px;
+  }
+  .portfolio-overlay span { font-size: .75rem; color: var(--gold); letter-spacing: .1em; text-transform: uppercase; }
+
+  .portfolio-colors {
+    position: absolute; inset: 0;
+    transition: opacity .4s;
+  }
+
+  /* ─── CONTACT PAGE ─── */
+  .contact-layout {
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px;
+    margin-top: 60px;
+  }
+  .contact-info h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 300; margin-bottom: 16px;
+  }
+  .contact-detail {
+    display: flex; flex-direction: column; gap: 28px;
+    margin-top: 40px;
+  }
+  .contact-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding-bottom: 28px; border-bottom: 1px solid var(--border);
+  }
+  .contact-icon {
+    width: 44px; height: 44px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: var(--gold); flex-shrink: 0;
+  }
+  .contact-item-info strong {
+    display: block; font-size: .75rem; font-weight: 500;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .contact-item-info p { font-size: .9rem; color: var(--muted); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 20px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-label {
+    font-size: .7rem; font-weight: 500; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .form-input, .form-textarea {
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 14px 18px; color: var(--text); font-family: 'Outfit', sans-serif;
+    font-size: .9rem; font-weight: 300; outline: none;
+    transition: border-color .3s;
+    
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--gold); }
+  .form-textarea { resize: none; height: 130px; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg2);
+    padding: 60px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+  }
+  footer .logo-foot {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 700;
+  }
+  footer .logo-foot span { color: var(--gold); }
+  .footer-copy { font-size: .8rem; color: var(--muted); }
+  .footer-socials { display: flex; gap: 16px; }
+  .social-link {
+    width: 40px; height: 40px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: .9rem; 
+    transition: border-color .3s, color .3s, transform .3s;
+  }
+  .social-link:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0; transform: translateY(36px);
+    transition: opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: .1s; }
+  .reveal-delay-2 { transition-delay: .2s; }
+  .reveal-delay-3 { transition-delay: .3s; }
+  .reveal-delay-4 { transition-delay: .4s; }
+
+  /* ─── SCROLL PROGRESS ─── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+    z-index: 9001; width: 0%;
+    transition: width .1s linear;
+  }
+
+  /* ─── BACKGROUND SECTIONS ─── */
+  .section-dark { background: var(--bg2); }
+  .section-accent {
+    background: linear-gradient(135deg, var(--bg) 0%, #0e0e22 100%);
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px; background: var(--border); margin: 0 60px;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+    .nav-links { gap: 20px; }
+    section { padding: 70px 24px; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-stats { gap: 32px; margin-top: 48px; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .portfolio-grid { grid-template-columns: 1fr 1fr; }
+    .portfolio-item.featured { grid-column: span 2; }
+    .contact-layout { grid-template-columns: 1fr; }
+    footer { padding: 40px 24px; }
+    .nav-cta { display: none; }
+    .divider { margin: 0 24px; }
+  }
+
+  @media (max-width: 560px) {
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .portfolio-item.featured { grid-column: span 1; aspect-ratio: 4/3; }
+    .hero-stats { flex-wrap: wrap; gap: 24px; }
+    .form-row { grid-template-columns: 1fr; }
+    .nav-links { gap: 14px; }
+    .footer-socials { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor elements removed -->
+
+<!-- Page Transition Overlay -->
+<div id="page-overlay"></div>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- ─── NAVBAR ─── -->
+<nav id="navbar">
+  <div class="nav-logo" onclick="navigate('home')">Nexora<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#" onclick="navigate('home')" data-page="home">Beranda</a></li>
+    <li><a href="#" onclick="navigate('about')" data-page="about">Tentang</a></li>
+    <li><a href="#" onclick="navigate('services')" data-page="services">Layanan</a></li>
+    <li><a href="#" onclick="navigate('portfolio')" data-page="portfolio">Portfolio</a></li>
+    <li><a href="#" onclick="navigate('contact')" data-page="contact">Kontak</a></li>
+  </ul>
+  <button class="nav-cta" onclick="navigate('contact')">Mulai Proyek</button>
+</nav>
+
+<!-- ═══════════════ HOME PAGE ═══════════════ -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="grid-lines"></div>
+    <div class="hero-content">
+      <div class="hero-tag">Creative & Digital Agency</div>
+      <h1 class="hero-title">Kami <em>Merancang</em><br>Masa Depan<br>Digital Anda</h1>
+      <p class="hero-desc">Studio kreatif yang menghadirkan solusi desain dan pengembangan digital premium — dari identitas merek hingga pengalaman web yang tak terlupakan.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="navigate('portfolio')">Lihat Karya Kami</button>
+        <button class="btn-ghost" onclick="navigate('about')">
+          Tentang Kami
+          <span class="arrow"></span>
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">120+</div>
+          <div class="stat-label">Proyek Selesai</div>
+        </div>
+        <div>
+          <div class="stat-num">8+</div>
+          <div class="stat-label">Tahun Pengalaman</div>
+        </div>
+        <div>
+          <div class="stat-num">98%</div>
+          <div class="stat-label">Klien Puas</div>
+        </div>
+        <div>
+          <div class="stat-num">40+</div>
+          <div class="stat-label">Klien Global</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Mini services preview -->
+  <section class="section-dark">
+    <div class="section-label reveal">Apa Yang Kami Lakukan</div>
+    <h2 class="section-title reveal reveal-delay-1">Layanan Unggulan<br>Kami</h2>
+    <div class="services-grid">
+      <div class="service-card reveal reveal-delay-1">
+        <span class="service-icon">✦</span>
+        <span class="service-num">01</span>
+        <h3>Brand Identity</h3>
+        <p>Kami membangun identitas merek yang kuat, kohesif, dan membekas — dari logo hingga panduan merek lengkap.</p>
+        <span class="service-link" onclick="navigate('services')">Pelajari lebih →</span>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <span class="service-icon">◈</span>
+        <span class="service-num">02</span>
+        <h3>Web Development</h3>
+        <p>Website dan aplikasi web performa tinggi yang memadukan estetika premium dengan fungsi yang optimal.</p>
+        <span class="service-link" onclick="navigate('services')">Pelajari lebih →</span>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <span class="service-icon">❋</span>
+        <span class="service-num">03</span>
+        <h3>UI/UX Design</h3>
+        <p>Pengalaman pengguna yang intuitif dan antarmuka yang memukau — desain yang berfungsi seindah tampilannya.</p>
+        <span class="service-link" onclick="navigate('services')">Pelajari lebih →</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo-foot">Nexora<span>.</span></div>
+    <p class="footer-copy">© 2025 Nexora Studio. Seluruh hak dilindungi.</p>
+    <div class="footer-socials">
+      <div class="social-link">in</div>
+      <div class="social-link">tw</div>
+      <div class="social-link">ig</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════ ABOUT PAGE ═══════════════ -->
+<div id="page-about" class="page">
+  <section style="padding-top: 140px;">
+    <div class="section-label reveal">Studio Kami</div>
+    <h2 class="section-title reveal reveal-delay-1">Kreativitas Bertemu<br><em>Presisi</em></h2>
+    <p class="section-sub reveal reveal-delay-2">Kami adalah tim desainer dan pengembang yang berdedikasi untuk menciptakan karya digital yang melampaui ekspektasi.</p>
+
+    <div class="about-grid">
+      <div class="about-img-wrap reveal">
+        <div class="about-img-placeholder">
+          N
+          <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:linear-gradient(to top,rgba(201,168,76,.08),transparent)"></div>
+        </div>
+        <div class="about-frame"></div>
+        <div class="about-badge">
+          8+ <span>Tahun<br>Berpengalaman</span>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="section-label" style="margin-bottom:28px;">Visi & Nilai</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;margin-bottom:16px;line-height:1.3;">
+          Kami percaya bahwa desain yang <em style="color:var(--gold);font-style:italic;">hebat</em> mengubah bisnis.
+        </h3>
+        <p style="font-size:.92rem;line-height:1.8;color:var(--muted);margin-bottom:8px;">
+          Nexora Studio lahir dari hasrat untuk merevolusi pengalaman digital Indonesia. Setiap proyek kami dekati sebagai karya seni yang fungsional.
+        </p>
+        <ul class="value-list">
+          <li><span class="value-num">01</span><span><strong style="color:var(--text);display:block;margin-bottom:4px;">Kualitas Tanpa Kompromi</strong>Setiap detail dipikirkan, setiap piksel disempurnakan hingga sempurna.</span></li>
+          <li><span class="value-num">02</span><span><strong style="color:var(--text);display:block;margin-bottom:4px;">Kolaborasi Terbuka</strong>Kami bekerja bersama Anda, bukan hanya untuk Anda — transparansi adalah fondasi kami.</span></li>
+          <li><span class="value-num">03</span><span><strong style="color:var(--text);display:block;margin-bottom:4px;">Inovasi Berkelanjutan</strong>Teknologi dan tren bergerak cepat. Kami selalu berada di garis terdepan.</span></li>
+        </ul>
+        <button class="btn-primary" style="margin-top:36px;" onclick="navigate('contact')">Hubungi Kami</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-dark">
+    <div class="section-label reveal">Tim Kami</div>
+    <h2 class="section-title reveal reveal-delay-1">Orang-Orang di<br><em>Balik Karya</em></h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:48px;">
+      <div class="service-card reveal reveal-delay-1" style="text-align:center;padding:36px 24px;">
+        <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--bg3),#1a1a35);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);margin:0 auto 18px;">A</div>
+        <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;margin-bottom:4px;">Arya Pratama</h4>
+        <p style="font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;">Creative Director</p>
+      </div>
+      <div class="service-card reveal reveal-delay-2" style="text-align:center;padding:36px 24px;">
+        <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--bg3),#1a1a35);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);margin:0 auto 18px;">S</div>
+        <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;margin-bottom:4px;">Sari Dewi</h4>
+        <p style="font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;">Lead Designer</p>
+      </div>
+      <div class="service-card reveal reveal-delay-3" style="text-align:center;padding:36px 24px;">
+        <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--bg3),#1a1a35);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);margin:0 auto 18px;">R</div>
+        <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;margin-bottom:4px;">Rizky Hendra</h4>
+        <p style="font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;">Full-Stack Dev</p>
+      </div>
+      <div class="service-card reveal reveal-delay-4" style="text-align:center;padding:36px 24px;">
+        <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--bg3),#1a1a35);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);margin:0 auto 18px;">M</div>
+        <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;margin-bottom:4px;">Maya Lestari</h4>
+        <p style="font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;">UX Strategist</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo-foot">Nexora<span>.</span></div>
+    <p class="footer-copy">© 2025 Nexora Studio. Seluruh hak dilindungi.</p>
+    <div class="footer-socials">
+      <div class="social-link">in</div>
+      <div class="social-link">tw</div>
+      <div class="social-link">ig</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════ SERVICES PAGE ═══════════════ -->
+<div id="page-services" class="page">
+  <section style="padding-top:140px;">
+    <div class="section-label reveal">Keahlian Kami</div>
+    <h2 class="section-title reveal reveal-delay-1">Layanan <em>Premium</em><br>yang Kami Tawarkan</h2>
+    <p class="section-sub reveal reveal-delay-2">Solusi menyeluruh untuk kebutuhan digital bisnis Anda, dari strategi hingga implementasi.</p>
+    <div class="services-grid">
+      <div class="service-card reveal reveal-delay-1">
+        <span class="service-icon">✦</span>
+        <span class="service-num">01</span>
+        <h3>Brand Identity</h3>
+        <p>Logo, panduan merek, tipografi, palet warna, stationery, dan sistem identitas visual yang komprehensif untuk merek Anda.</p>
+        <div style="margin-top:20px;font-size:.8rem;color:var(--muted);">Logo · Panduan Merek · Stationery</div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <span class="service-icon">◈</span>
+        <span class="service-num">02</span>
+        <h3>Web Development</h3>
+        <p>Website dan aplikasi web berkecepatan tinggi, responsif, dan SEO-friendly yang dibangun dengan teknologi terkini.</p>
+        <div style="margin-top:20px;font-size:.8rem;color:var(--muted);">React · Next.js · Node.js</div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <span class="service-icon">❋</span>
+        <span class="service-num">03</span>
+        <h3>UI/UX Design</h3>
+        <p>Riset pengguna mendalam, wireframing, prototyping, dan desain antarmuka yang indah dan mudah digunakan.</p>
+        <div style="margin-top:20px;font-size:.8rem;color:var(--muted);">Figma · Prototype · User Research</div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <span class="service-icon">⬡</span>
+        <span class="service-num">04</span>
+        <h3>Digital Marketing</h3>
+        <p>Strategi konten, SEO, iklan digital, dan manajemen media sosial untuk meningkatkan jangkauan dan konversi merek Anda.</p>
+        <div style="margin-top:20px;font-size:.8rem;color:var(--muted);">SEO · Ads · Social Media</div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <span class="service-icon">◉</span>
+        <span class="service-num">05</span>
+        <h3>Motion & Video</h3>
+        <p>Animasi merek, video explainer, motion graphics, dan konten visual dinamis yang memukau audiens Anda.</p>
+        <div style="margin-top:20px;font-size:.8rem;color:var(--muted);">After Effects · Motion · 3D</div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <span class="service-icon">⬥</span>
+        <span class="service-num">06</span>
+        <h3>Konsultasi Digital</h3>
+        <p>Audit digital, strategi transformasi, roadmap teknologi, dan panduan untuk membawa bisnis Anda ke level berikutnya.</p>
+        <div style="margin-top:20px;font-size:.8rem;color:var(--muted);">Audit · Strategi · Roadmap</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section-dark">
+    <div class="section-label reveal">Paket Harga</div>
+    <h2 class="section-title reveal reveal-delay-1">Investasi yang <em>Tepat</em></h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:48px;">
+      <div class="service-card reveal reveal-delay-1">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;">Starter</h3>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--gold);margin:16px 0 8px;">5<span style="font-size:1.2rem;">jt</span></div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:24px;">Cocok untuk bisnis kecil & startup</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Landing Page</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Desain Responsif</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;2 Revisi</li>
+          <li style="font-size:.85rem;color:var(--muted);opacity:.4;">✗ &nbsp;Custom Animasi</li>
+          <li style="font-size:.85rem;color:var(--muted);opacity:.4;">✗ &nbsp;SEO Lanjutan</li>
+        </ul>
+        <button class="btn-primary" style="width:100%;margin-top:28px;" onclick="navigate('contact')">Mulai</button>
+      </div>
+      <div class="service-card reveal reveal-delay-2" style="border:1px solid var(--gold);position:relative;">
+        <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 16px;white-space:nowrap;">Terpopuler</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;margin-top:12px;">Professional</h3>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--gold);margin:16px 0 8px;">15<span style="font-size:1.2rem;">jt</span></div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:24px;">Solusi lengkap untuk bisnis berkembang</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Website Multi-halaman</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Desain Responsif</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;5 Revisi</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Custom Animasi</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;SEO Lanjutan</li>
+        </ul>
+        <button class="btn-primary" style="width:100%;margin-top:28px;" onclick="navigate('contact')">Pilih Paket</button>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;">Enterprise</h3>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--gold);margin:16px 0 8px;">Custom</div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:24px;">Solusi khusus untuk korporasi</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Semua Fitur Pro</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Tim Dedicated</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Revisi Tak Terbatas</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;Support Prioritas</li>
+          <li style="font-size:.85rem;color:var(--muted);">✓ &nbsp;SLA Garansi</li>
+        </ul>
+        <button class="btn-primary" style="width:100%;margin-top:28px;" onclick="navigate('contact')">Diskusi</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo-foot">Nexora<span>.</span></div>
+    <p class="footer-copy">© 2025 Nexora Studio. Seluruh hak dilindungi.</p>
+    <div class="footer-socials">
+      <div class="social-link">in</div>
+      <div class="social-link">tw</div>
+      <div class="social-link">ig</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════ PORTFOLIO PAGE ═══════════════ -->
+<div id="page-portfolio" class="page">
+  <section style="padding-top:140px;">
+    <div class="section-label reveal">Karya Kami</div>
+    <h2 class="section-title reveal reveal-delay-1">Portfolio <em>Pilihan</em></h2>
+    <p class="section-sub reveal reveal-delay-2">Setiap proyek adalah cerita tersendiri — tentang tantangan, kreativitas, dan hasil yang melampaui ekspektasi.</p>
+
+    <div class="portfolio-filter reveal">
+      <button class="filter-btn active" onclick="filterPortfolio(this,'all')">Semua</button>
+      <button class="filter-btn" onclick="filterPortfolio(this,'branding')">Branding</button>
+      <button class="filter-btn" onclick="filterPortfolio(this,'web')">Web</button>
+      <button class="filter-btn" onclick="filterPortfolio(this,'ui')">UI/UX</button>
+    </div>
+
+    <div class="portfolio-grid" id="portfolio-grid">
+      <div class="portfolio-item featured reveal" data-cat="web">
+        <div class="portfolio-bg" style="background:linear-gradient(135deg,#0e0e22,#1a0e2e);font-size:5rem;color:rgba(201,168,76,.15);">◈</div>
+        <div class="portfolio-overlay">
+          <h4>Artisanal E-Commerce</h4>
+          <span>Web Development</span>
+        </div>
+      </div>
+      <div class="portfolio-item reveal reveal-delay-1" data-cat="branding">
+        <div class="portfolio-bg" style="background:linear-gradient(135deg,#0e1a14,#0a1408);color:rgba(80,200,120,.15);">✦</div>
+        <div class="portfolio-overlay">
+          <h4>Veridian Brand</h4>
+          <span>Branding</span>
+        </div>
+      </div>
+      <div class="portfolio-item reveal reveal-delay-2" data-cat="ui">
+        <div class="portfolio-bg" style="background:linear-gradient(135deg,#1a0e0e,#2a1208);color:rgba(220,100,60,.15);">❋</div>
+        <div class="portfolio-overlay">
+          <h4>Pulse Dashboard</h4>
+          <span>UI/UX Design</span>
+        </div>
+      </div>
+      <div class="portfolio-item reveal reveal-delay-1" data-cat="branding">
+        <div class="portfolio-bg" style="background:linear-gradient(135deg,#0a0e1a,#0a1220);color:rgba(60,140,220,.15);">⬡</div>
+        <div class="portfolio-overlay">
+          <h4>Nexum Identity</h4>
+          <span>Brand Identity</span>
+        </div>
+      </div>
+      <div class="portfolio-item reveal reveal-delay-2" data-cat="web">
+        <div class="portfolio-bg" style="background:linear-gradient(135deg,#1a1808,#1e1a08);color:rgba(201,168,76,.15);">◉</div>
+        <div class="portfolio-overlay">
+          <h4>Luxe Hotel Site</h4>
+          <span>Web Development</span>
+        </div>
+      </div>
+      <div class="portfolio-item reveal reveal-delay-3" data-cat="ui">
+        <div class="portfolio-bg" style="background:linear-gradient(135deg,#180e1a,#200e24);color:rgba(160,80,220,.15);">⬥</div>
+        <div class="portfolio-overlay">
+          <h4>Bloom App</h4>
+          <span>Mobile UI/UX</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section-dark">
+    <div class="section-label reveal">Kata Klien</div>
+    <h2 class="section-title reveal reveal-delay-1">Mereka <em>Berbicara</em></h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:48px;">
+      <div class="service-card reveal reveal-delay-1">
+        <div style="color:var(--gold);font-size:1.4rem;letter-spacing:.1em;margin-bottom:20px;">★★★★★</div>
+        <p style="font-size:.9rem;line-height:1.8;color:var(--muted);font-style:italic;">"Nexora mengubah visi kami menjadi realita digital yang luar biasa. Kualitas kerja mereka benar-benar melampaui ekspektasi kami."</p>
+        <div style="margin-top:24px;display:flex;gap:12px;align-items:center;">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);">B</div>
+          <div><strong style="font-size:.85rem;">Budi Santoso</strong><br><span style="font-size:.75rem;color:var(--gold);">CEO, TechVenture ID</span></div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div style="color:var(--gold);font-size:1.4rem;letter-spacing:.1em;margin-bottom:20px;">★★★★★</div>
+        <p style="font-size:.9rem;line-height:1.8;color:var(--muted);font-style:italic;">"Tim yang profesional, komunikatif, dan detail-oriented. Website kami kini jauh lebih baik dalam segala aspek."</p>
+        <div style="margin-top:24px;display:flex;gap:12px;align-items:center;">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);">N</div>
+          <div><strong style="font-size:.85rem;">Nadia Putri</strong><br><span style="font-size:.75rem;color:var(--gold);">Founder, Bloom Studio</span></div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <div style="color:var(--gold);font-size:1.4rem;letter-spacing:.1em;margin-bottom:20px;">★★★★★</div>
+        <p style="font-size:.9rem;line-height:1.8;color:var(--muted);font-style:italic;">"Hasil kerja Nexora membuat brand kami naik level. Investasi terbaik yang pernah kami lakukan."</p>
+        <div style="margin-top:24px;display:flex;gap:12px;align-items:center;">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);">H</div>
+          <div><strong style="font-size:.85rem;">Hendra Kusuma</strong><br><span style="font-size:.75rem;color:var(--gold);">Director, Aura Corp</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo-foot">Nexora<span>.</span></div>
+    <p class="footer-copy">© 2025 Nexora Studio. Seluruh hak dilindungi.</p>
+    <div class="footer-socials">
+      <div class="social-link">in</div>
+      <div class="social-link">tw</div>
+      <div class="social-link">ig</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════ CONTACT PAGE ═══════════════ -->
+<div id="page-contact" class="page">
+  <section style="padding-top:140px;">
+    <div class="section-label reveal">Hubungi Kami</div>
+    <h2 class="section-title reveal reveal-delay-1">Mari Mulai<br><em>Proyek Anda</em></h2>
+    <p class="section-sub reveal reveal-delay-2">Ceritakan ide Anda. Kami siap mengubahnya menjadi pengalaman digital yang luar biasa.</p>
+
+    <div class="contact-layout">
+      <div class="contact-info reveal">
+        <h3>Kami ingin mendengar dari Anda</h3>
+        <p style="font-size:.9rem;line-height:1.8;color:var(--muted);">Apakah Anda memiliki proyek besar atau sekadar ingin menjelajahi kemungkinan — kami di sini untuk membantu.</p>
+        <div class="contact-detail">
+          <div class="contact-item">
+            <div class="contact-icon">✉</div>
+            <div class="contact-item-info">
+              <strong>Email</strong>
+              <p>hello@nexorastudio.id</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">☏</div>
+            <div class="contact-item-info">
+              <strong>Telepon</strong>
+              <p>+62 812 3456 7890</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">◎</div>
+            <div class="contact-item-info">
+              <strong>Lokasi</strong>
+              <p>Jakarta Selatan, Indonesia</p>
+            </div>
+          </div>
+          <div class="contact-item" style="border:none;padding-bottom:0;">
+            <div class="contact-icon">⏱</div>
+            <div class="contact-item-info">
+              <strong>Jam Kerja</strong>
+              <p>Senin–Jumat, 09.00–18.00 WIB</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nama</label>
+              <input class="form-input" type="text" placeholder="Nama Anda" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" type="email" placeholder="email@anda.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subjek</label>
+            <input class="form-input" type="text" placeholder="Topik pesan Anda">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Layanan yang Diminati</label>
+            <select class="form-input" style="appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%237e7e99\" stroke-width=\"2\"><polyline points=\"6 9 12 15 18 9\"/></svg>');background-repeat:no-repeat;background-position:right 16px center;background-size:16px;cursor:none;">
+              <option value="" style="background:#0e0e1a;">Pilih layanan...</option>
+              <option style="background:#0e0e1a;">Brand Identity</option>
+              <option style="background:#0e0e1a;">Web Development</option>
+              <option style="background:#0e0e1a;">UI/UX Design</option>
+              <option style="background:#0e0e1a;">Digital Marketing</option>
+              <option style="background:#0e0e1a;">Motion & Video</option>
+              <option style="background:#0e0e1a;">Konsultasi Digital</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pesan</label>
+            <textarea class="form-textarea" placeholder="Ceritakan proyek Anda..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary" id="submit-btn" style="width:100%;padding:18px;">
+            Kirim Pesan
+          </button>
+          <div id="form-success" style="display:none;text-align:center;padding:20px;background:rgba(201,168,76,.08);border:1px solid var(--border);">
+            <div style="color:var(--gold);font-size:1.4rem;margin-bottom:8px;">✓</div>
+            <p style="font-size:.9rem;color:var(--muted);">Pesan Anda berhasil terkirim! Kami akan menghubungi Anda segera.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo-foot">Nexora<span>.</span></div>
+    <p class="footer-copy">© 2025 Nexora Studio. Seluruh hak dilindungi.</p>
+    <div class="footer-socials">
+      <div class="social-link">in</div>
+      <div class="social-link">tw</div>
+      <div class="social-link">ig</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<script>
+  /* ─── NAVBAR SCROLL ─── */
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+    // progress bar
+    const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('progress-bar').style.width = scrolled + '%';
+    // reveal elements
+    revealOnScroll();
+  });
+
+  /* ─── PAGE NAVIGATION ─── */
+  let currentPage = 'home';
+
+  function navigate(page) {
+    if (page === currentPage) return;
+    const overlay = document.getElementById('page-overlay');
+    // Phase 1: slide overlay in (cover screen)
+    overlay.className = 'entering';
+    overlay.style.pointerEvents = 'all';
+    setTimeout(() => {
+      // Switch page
+      document.getElementById('page-' + currentPage).classList.remove('active');
+      document.getElementById('page-' + page).classList.add('active');
+      currentPage = page;
+      window.scrollTo(0, 0);
+      updateNavLinks();
+      // Phase 2: slide overlay out (reveal new page)
+      overlay.className = 'leaving';
+      setTimeout(() => {
+        overlay.className = '';
+        overlay.style.pointerEvents = 'none';
+        revealOnScroll();
+      }, 560);
+    }, 560);
+  }
+
+  function updateNavLinks() {
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.classList.toggle('active', a.dataset.page === currentPage);
+    });
+  }
+
+  /* ─── PREVENT DEFAULT ON NAV LINKS ─── */
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
+  });
+
+  /* ─── SCROLL REVEAL ─── */
+  function revealOnScroll() {
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+    activePage.querySelectorAll('.reveal').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight - 60) {
+        el.classList.add('visible');
+      }
+    });
+  }
+  // initial trigger
+  setTimeout(revealOnScroll, 100);
+
+  /* ─── PORTFOLIO FILTER ─── */
+  function filterPortfolio(btn, cat) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+      const show = cat === 'all' || item.dataset.cat === cat;
+      item.style.transition = 'opacity .4s, transform .4s';
+      if (show) {
+        item.style.opacity = '1';
+        item.style.transform = 'scale(1)';
+        item.style.display = '';
+      } else {
+        item.style.opacity = '0';
+        item.style.transform = 'scale(.95)';
+        setTimeout(() => { if(item.dataset.cat !== cat && cat !== 'all') item.style.display = 'none'; }, 400);
+      }
+    });
+  }
+
+  /* ─── FORM SUBMIT ─── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'Mengirim...';
+    btn.style.opacity = '.6';
+    setTimeout(() => {
+      btn.style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    }, 1200);
+  }
+
+  /* ─── COUNTER ANIMATION ─── */
+  function animateCounters() {
+    document.querySelectorAll('.stat-num').forEach(el => {
+      const text = el.textContent;
+      const num = parseInt(text.replace(/\D/g,''));
+      const suffix = text.replace(/[\d]/g,'');
+      if (!num) return;
+      let start = 0;
+      const duration = 1800;
+      const step = timestamp => {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(ease * num) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  setTimeout(animateCounters, 800);
+
+  /* ─── INIT ─── */
+  updateNavLinks();
+</script>
+</body>
+</html>
